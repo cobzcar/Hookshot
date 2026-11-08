@@ -1,0 +1,19 @@
+   name: Builder
+   on: workflow_dispatch
+   jobs:
+     build:
+       runs-on: windows-latest
+       steps:
+         - uses: actions/checkout@v4
+           with:
+             ref: oot-fixes
+         - uses: actions/setup-dotnet@v4
+           with:
+             dotnet-version: 8.0.x
+         - run: dotnet publish builder/HookshotBuilder -c Release -o out
+         - run: Copy-Item -Recurse nx2, third_party, host, gpu, scripts out/tools/ -ErrorAction SilentlyContinue
+           shell: pwsh
+         - uses: actions/upload-artifact@v4
+           with:
+             name: HookshotBuilder
+             path: out
